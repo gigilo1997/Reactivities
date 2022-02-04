@@ -9,6 +9,12 @@ services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
+services.AddCors(opt => {
+  opt.AddPolicy("CorsPolicy", policy => {
+    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+  });
+});
+
 services.AddReactivityServices(configuration);
 
 var app = builder.Build();
@@ -20,6 +26,8 @@ if (app.Environment.IsDevelopment()) {
   app.UseSwagger();
   app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
