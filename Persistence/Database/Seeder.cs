@@ -1,7 +1,6 @@
 ﻿using Domain;
-using Persistence.Database;
 
-namespace Persistence;
+namespace Persistence.Database;
 
 public static class Seeder
 {

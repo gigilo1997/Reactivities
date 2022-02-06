@@ -2,9 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Persistence.Database;
 
-namespace Persistence;
+namespace Persistence.Database;
 
 public static class MigrationHelper
 {
