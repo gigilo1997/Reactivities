@@ -1,19 +1,24 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Activities;
 
 public class Create
 {
-  public record Command(Activity Activity) : IRequest;
+  public record Command(Activity Activity) : IRequest<Result<Unit>>;
 
-  public class Handler : IRequestHandler<Command>
+  public class CommandValidator : AbstractValidator<Command>
+  {
+    public CommandValidator()
+    {
+      RuleFor(x => x.Activity).SetValidator(new ActivityValidator());
+    }
+  }
+
+  public class Handler : IRequestHandler<Command, Result<Unit>>
   {
     private readonly ReactivityContext context;
 
@@ -22,11 +27,12 @@ public class Create
       this.context = context;
     }
 
-    public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
     {
       context.Activities.Add(request.Activity);
-      await context.SaveChangesAsync();
-      return Unit.Value;
+      var result = await context.SaveChangesAsync() > 0;
+      if (!result) return Result<Unit>.Failure("Failed to create activity");
+      return Result<Unit>.Success(Unit.Value);
     }
   }
 }

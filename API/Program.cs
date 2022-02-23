@@ -1,3 +1,4 @@
+using API.Middleware;
 using Application;
 using Persistence.Database;
 
@@ -5,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
-services.AddControllers();
+services.AddControllers().AddMvcServices();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
@@ -22,6 +23,8 @@ var app = builder.Build();
 await app.MigrateDatabase();
 
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ExceptionMiddleware>();
+
 if (app.Environment.IsDevelopment()) {
   app.UseSwagger();
   app.UseSwaggerUI();

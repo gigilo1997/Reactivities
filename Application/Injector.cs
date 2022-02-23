@@ -1,5 +1,6 @@
 ﻿using Application.Activities;
 using Application.Core;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,5 +16,14 @@ public static class Injector
     services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
     return services;
+  }
+
+  public static IMvcBuilder AddMvcServices(this IMvcBuilder builder)
+  {
+    builder.AddFluentValidation(config => {
+      config.RegisterValidatorsFromAssemblyContaining<Create>();
+    });
+
+    return builder;
   }
 }
