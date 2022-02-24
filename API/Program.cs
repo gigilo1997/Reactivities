@@ -1,22 +1,14 @@
+using API.Extensions;
 using API.Middleware;
-using Application;
 using Persistence.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 var services = builder.Services;
-services.AddControllers().AddMvcServices();
-services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
 
-services.AddCors(opt => {
-  opt.AddPolicy("CorsPolicy", policy => {
-    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-  });
-});
-
-services.AddReactivityServices(configuration);
+services.AddApplicationServices(configuration);
+services.AddIdentityServices(configuration);
 
 var app = builder.Build();
 
@@ -32,6 +24,7 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,8 +15,9 @@ public static class MigrationHelper
     var services = scope.ServiceProvider;
     try {
       var context = services.GetRequiredService<ReactivityContext>();
+      var userManager = services.GetRequiredService<UserManager<AppUser>>();
       await context.Database.MigrateAsync();
-      await context.SeedDataAsync();
+      await context.SeedDataAsync(userManager);
     }
     catch (Exception ex) {
       var logger = services.GetRequiredService<ILogger>();
