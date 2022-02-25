@@ -46,11 +46,15 @@ public class AccountController : ControllerBase
   [HttpPost("register")]
   public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
   {
-    if (await userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
-      return BadRequest("Email taken");
+    if (await userManager.Users.AnyAsync(x => x.Email == registerDto.Email)) {
+      ModelState.AddModelError("email", "Email taken");
+      return ValidationProblem(ModelState);
+    }
 
-    if (await userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
-      return BadRequest("Username taken");
+    if (await userManager.Users.AnyAsync(x => x.UserName == registerDto.Username)) {
+      ModelState.AddModelError("username", "Username taken");
+      return ValidationProblem(ModelState);
+    }
 
     var user = new AppUser {
       DisplayName = registerDto.DisplayName,
