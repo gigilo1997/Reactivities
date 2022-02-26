@@ -1,6 +1,14 @@
 ﻿using Application;
+using Application.Activities;
+using Application.Core;
+using Application.Interfaces;
+using FluentValidation.AspNetCore;
+using Infrastructure.Security;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Persistence.Database;
 
 namespace API.Extensions;
 
@@ -11,7 +19,9 @@ public static class ApplicationServiceExtensions
     services.AddControllers(options => {
       var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
       options.Filters.Add(new AuthorizeFilter(policy));
-    }).AddMvcServices();
+    }).AddFluentValidation(config => {
+      config.RegisterValidatorsFromAssemblyContaining<Create>();
+    });
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen();
 
@@ -21,7 +31,12 @@ public static class ApplicationServiceExtensions
       });
     });
 
-    services.AddReactivityServices(configuration);
+    services.AddDbContext<ReactivityContext>(options => {
+      options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+    });
+    services.AddMediatR(typeof(List.Handler).Assembly);
+    services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+    services.AddScoped<IUserAccessor, UserAccessor>();
 
     return services;
   }
