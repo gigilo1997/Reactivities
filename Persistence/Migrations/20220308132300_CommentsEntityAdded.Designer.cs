@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence.Database;
 
@@ -11,9 +12,10 @@ using Persistence.Database;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ReactivityContext))]
-    partial class ReactivityContextModelSnapshot : ModelSnapshot
+    [Migration("20220308132300_CommentsEntityAdded")]
+    partial class CommentsEntityAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
